@@ -3,6 +3,7 @@ package com.asr.user.service.service.impl;
 import com.asr.user.service.entity.Rating;
 import com.asr.user.service.entity.User;
 import com.asr.user.service.exception.UserServiceException;
+import com.asr.user.service.external.RatingServiceExternal;
 import com.asr.user.service.repository.UserRepository;
 import com.asr.user.service.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private RatingServiceExternal ratingServiceExternal;
 
     @Override
     public User saveUser(User user) {
@@ -43,7 +47,8 @@ public class UserServiceImpl implements UserService {
             log.warn("User with id: {} not found", id);
             throw new UserServiceException("User not found with id: " + id);
         }
-        ArrayList<Rating> response = restTemplate.getForObject("http://RATINGSERVICE/ratings/users/" + referenceById.getId(), ArrayList.class);
+//        ArrayList<Rating> response = restTemplate.getForObject("http://RATINGSERVICE/ratings/users/" + referenceById.getId(), ArrayList.class);
+        ArrayList<Rating> response = ratingServiceExternal.getRating(id);
         log.info("Fetched ratings for user with id: {}: {}", id, response);
         referenceById.setRatings(response);
         return referenceById;

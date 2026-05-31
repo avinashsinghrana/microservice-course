@@ -1,7 +1,11 @@
 package com.asr.user.service.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.ToString;
 
+@ToString
+@Data
 @Entity
 @Table(name = "ratings")
 public class Rating {
