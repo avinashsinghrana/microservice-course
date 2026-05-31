@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
             log.warn("User with id: {} not found", id);
             throw new UserServiceException("User not found with id: " + id);
         }
-//        ArrayList<Rating> response = restTemplate.getForObject("http://RATINGSERVICE/ratings/users/" + referenceById.getId(), ArrayList.class);
+//        ArrayList<Rating> response = restTemplate.getForObject("http://RATING-SERVICE/ratings/users/" + referenceById.getId(), ArrayList.class);
         ArrayList<Rating> response = ratingServiceExternal.getRating(id);
         log.info("Fetched ratings for user with id: {}: {}", id, response);
         referenceById.setRatings(response);
