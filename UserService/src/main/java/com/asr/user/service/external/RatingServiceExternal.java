@@ -10,6 +10,6 @@ import java.util.ArrayList;
 @FeignClient(name = "RATINGSERVICE")
 public interface RatingServiceExternal {
 
-    @GetMapping("/ratings/users/{userId}")
+    @GetMapping("/rating-service/ratings/users/{userId}")
     ArrayList<Rating> getRating(@PathVariable("userId") Long userId);
 }

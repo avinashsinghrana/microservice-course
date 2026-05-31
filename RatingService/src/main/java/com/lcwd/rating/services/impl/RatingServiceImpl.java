@@ -34,7 +34,7 @@ public class RatingServiceImpl implements RatingService {
     public List<Rating> getRatingByUserId(String userId) {
         List<Rating> ratings = repository.findByUserId(userId);
         for (Rating rating : ratings) {
-            Hotel hotel = restTemplate.getForObject("http://HOTELSERVICE/hotels/" + rating.getHotelId(), Hotel.class);
+            Hotel hotel = restTemplate.getForObject("http://HOTELSERVICE/hotel-service/hotels/" + rating.getHotelId(), Hotel.class);
             rating.setHotel(hotel);
         }
         return ratings;
