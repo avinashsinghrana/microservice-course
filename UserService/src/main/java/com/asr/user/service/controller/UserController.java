@@ -5,6 +5,7 @@ import com.asr.user.service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,21 +17,25 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/users")
+    @PreAuthorize("hasAnyRole('ROLE_admin', 'ROLE_user')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
     }
 
     @GetMapping("/users/all")
+    @PreAuthorize("hasAnyRole('ROLE_admin', 'ROLE_user')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
     }
 
     @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('ROLE_admin')")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(id));
     }
 
     @DeleteMapping("/delete/users/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_admin', 'ROLE_user')")
     public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.deleteUserById(id));
     }

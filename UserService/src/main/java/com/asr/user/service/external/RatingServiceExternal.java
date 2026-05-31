@@ -2,9 +2,7 @@ package com.asr.user.service.external;
 
 import com.asr.user.service.entity.Rating;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 

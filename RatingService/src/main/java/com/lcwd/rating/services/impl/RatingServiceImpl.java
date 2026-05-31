@@ -7,9 +7,16 @@ import com.lcwd.rating.services.RatingService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import org.springframework.http.HttpHeaders;
 import java.util.List;
 
 @Service
@@ -47,7 +54,32 @@ public class RatingServiceImpl implements RatingService {
     @CircuitBreaker(name = "hotelServiceBreaker", fallbackMethod = "hotelFallback")
     public Hotel getHotelWithFallback(String hotelId) {
         String url = "http://HOTEL-SERVICE/hotel-service/hotels/" + hotelId;
-        return restTemplate.getForObject(url, Hotel.class);
+
+        // 1. Initialize Spring's mutable HttpHeaders utility
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        // 2. Safely extract your security token context string
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+            String tokenValue = jwtAuthenticationToken.getToken().getTokenValue();
+
+            // CRUCIAL: Must format as "Bearer <token>"
+            headers.set("Authorization", "Bearer " + tokenValue);
+        }
+
+        // 3. Wrap your headers inside an HttpEntity wrapper
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        // 4. Execute using exchange() to inject your custom metadata
+        ResponseEntity<Hotel> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                Hotel.class
+        );
+
+        return response.getBody();
     }
 
     public Hotel hotelFallback(String hotelId, Throwable throwable) {
